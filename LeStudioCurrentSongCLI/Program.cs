@@ -20,7 +20,8 @@ namespace LeStudioCurrentSongCLI
 
             Console.WriteLine(AsyncContext.Run(currentSong.getCurrentSong));
 
-            var input = Console.ReadLine();
+            //DEBUG PURPOSE
+            //Console.ReadLine();
         }
     }
 
