@@ -18,50 +18,54 @@ namespace LeStudioCurrentSongCLI
             Console.WriteLine(AsyncContext.Run(currentSong.getCurrentSong));
 
             //DEBUG PURPOSE
-            //Console.ReadLine();
+            Console.ReadLine();
         }
     }
 
     class CurrentSong
     {
-        private String titleString;
-        private String albumString;
-        private String authorString;
-        private String imageBase64;
-        private Boolean isPlayingBool;
+        private String titleString = null;
+        private String albumString = null;
+        private String authorString = null;
+        private String imageBase64 = null;
+        private Boolean isPlayingBool = false;
 
         private async Task LoadCurrentSong()
         {
             var mediaManager = new MediaManager();
-            await mediaManager.StartAsync();
-
-            var session = mediaManager.GetFocusedSession();
-
-            var playbackInfo = session.ControlSession.GetPlaybackInfo();
-            var mediaProperties = await session.ControlSession.TryGetMediaPropertiesAsync();
-
-            this.isPlayingBool = playbackInfo.PlaybackStatus == Windows.Media.Control.GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing;
-            this.titleString = mediaProperties.Title;
-            this.authorString = mediaProperties.Artist;
-            this.albumString = mediaProperties.AlbumTitle;
-
             try
             {
-                Image image = Image.FromStream((await mediaProperties.Thumbnail.OpenReadAsync()).AsStream());
-                String imgstr;
-                using (MemoryStream m = new MemoryStream())
+                await mediaManager.StartAsync();
+
+                var session = mediaManager.GetFocusedSession();
+
+                var playbackInfo = session.ControlSession.GetPlaybackInfo();
+                var mediaProperties = await session.ControlSession.TryGetMediaPropertiesAsync();
+
+                this.isPlayingBool = playbackInfo.PlaybackStatus == Windows.Media.Control.GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing;
+                this.titleString = mediaProperties.Title;
+                this.authorString = mediaProperties.Artist;
+                this.albumString = mediaProperties.AlbumTitle;
+
+                try
                 {
-                    image.Save(m, image.RawFormat);
-                    byte[] imageBytes = m.ToArray();
-                    string base64String = Convert.ToBase64String(imageBytes);
-                    imgstr = base64String;
+                    Image image = Image.FromStream((await mediaProperties.Thumbnail.OpenReadAsync()).AsStream());
+                    String imgstr;
+                    using (MemoryStream m = new MemoryStream())
+                    {
+                        image.Save(m, image.RawFormat);
+                        byte[] imageBytes = m.ToArray();
+                        string base64String = Convert.ToBase64String(imageBytes);
+                        imgstr = base64String;
+                    }
+                    this.imageBase64 = imgstr;
                 }
-                this.imageBase64 = imgstr;
+                catch (System.Exception)
+                {
+                    this.imageBase64 = null;
+                }
             }
-            catch (System.Exception)
-            {
-                this.imageBase64 = null;
-            }
+            catch (System.Exception) { }
         }
 
         public async Task<String> getCurrentSong()
