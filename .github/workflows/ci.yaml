@@ -24,6 +24,10 @@ jobs:
         with:
           dotnet-version: 6.0.300
 
+      - name: Install dependencies
+        shell: bash
+        run: dotnet restore
+
       - name: Build
         shell: bash
         run: |
@@ -31,6 +35,7 @@ jobs:
           release_name="LeStudioCurrentSongWINCLI-$tag-${{ matrix.target }}"
 
           # Build everything
+          dotnet build --configuration Release --no-restore
           dotnet publish LeStudioCurrentSongCLI/LeStudioCurrentSongCLI.csproj --framework netcoreapp6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
 
           # Delete output directory
