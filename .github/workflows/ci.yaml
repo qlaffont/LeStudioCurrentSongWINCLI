@@ -31,7 +31,7 @@ jobs:
           release_name="LeStudioCurrentSongWINCLI-$tag-${{ matrix.target }}"
 
           # Build everything
-          dotnet publish LeStudioCurrentSongCLI/LeStudioCurrentSongCLI.csproj --framework netcoreapp3.1 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
+          dotnet publish LeStudioCurrentSongCLI/LeStudioCurrentSongCLI.csproj --framework netcoreapp6.0 --runtime "${{ matrix.target }}" -c Release -o "$release_name"
 
           # Delete output directory
           rm -r "$release_name"
