@@ -39,6 +39,11 @@ namespace LeStudioCurrentSongCLI
 
                 var session = mediaManager.GetFocusedSession();
 
+                if(session == null)
+                {
+                    return;
+                }
+
                 var playbackInfo = session.ControlSession.GetPlaybackInfo();
                 var mediaProperties = await session.ControlSession.TryGetMediaPropertiesAsync();
 
